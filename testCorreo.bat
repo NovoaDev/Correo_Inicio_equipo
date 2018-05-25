@@ -9,8 +9,12 @@
 title /!\ Blat Mail /!\ By:Lola 
 
 ::CFG +++++++++++++++++++++++++++++++++++++++++++++++++++
-::RUTA DEL FICHERO LOG PARA LLEVAR UN REGISTRO
-set RUTALOG=C:\TEST\LOG.txt
+::RUTA CARPETA PRINCIPAL
+set RUTAPRINCIPAL=C:\MAIL
+::+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+::RUTA DE FICHEROS
+set RUTALOG=%RUTAPRINCIPAL%\LOG.txt
+set RUTATESTIGO=%RUTAPRINCIPAL%\TESTIGO.txt
 ::CORREO
 set DE=test.com
 set PARA="test.com"
@@ -25,36 +29,42 @@ SET PASSWORD="test"
 ::+++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 :VERIFICARCONEXION
-
-if exist %PARAMETRORUTAPROGRAMA% (
-
-) else (
-	
-)
+if exist %RUTATESTIGO% del %RUTATESTIGO%
+set ERRORLEVEL =
+ping -n 1 www.google.com > %RUTATESTIGO%
+@find /C "La solicitud de ping no pudo encontrar el host" %RUTATESTIGO% > null
+if %ERRORLEVEL%==0 call:VERIFICASIEXISTELOG "NO" else call:VERIFICASIEXISTELOG "SI"
 
 :VERIFICASIEXISTELOG
+set EXISTECONNECT=%~1
 
-if exist %PARAMETRORUTAPROGRAMA% (
-
-) else (
+if %EXISTECONNECT% EQU "SI" (
+	if exist %RUTALOG% (
+		call:AGREGALINEAENLOG "SI"
+	) else (
 	
+	)
+) else (
+	if exist %RUTALOG% (
+
+	) else (
+	
+	)
 )
 
 :AGREGALINEAENLOG
+set ENVIALOG=%~1
+if not exist %RUTALOG% echo Creacion de fichero  ----------------------------------------------------------- >>%RUTALOG%
+echo Se inicio el equipo a las %date% %time% >> %RUTALOG%
 
-if exist %PARAMETRORUTAPROGRAMA% (
-
+if %ENVIALOG% EQU "SI" (
+	call:ENVIARCORREOADJ "SI"
 ) else (
-	
+
 )
 
 :ELIMINALOG
-
-if exist %PARAMETRORUTAPROGRAMA% (
-
-) else (
-	
-)
+goto FIN
 
 :ENVIARCORREO
 
@@ -66,15 +76,11 @@ if exist %PARAMETRORUTAPROGRAMA% (
 
 )
 
-:ENVIARCORREOCONLOG
+:ENVIARCORREOADJ
 
-blat -body %MENSAJE% -to %PARA% -subject %SUJETO% -i %DE% -server %SERVER% -f %DE% -u %USUARIO% -pw %PASSWORD% -noh
+blat -body %MENSAJE% -to %PARA% -subject %SUJETO% -i %DE% -server %SERVER% -f %DE% -u %USUARIO% -pw %PASSWORD% -attach %RUTALOG% -noh
+if %ERRORLEVEL%==0 goto ELIMINALOG else goto FIN
 
-if exist %PARAMETRORUTAPROGRAMA% (
-
-) else (
-
-)
 
 :FIN
 exit
