@@ -22,6 +22,9 @@ set PARA="test.com"
 set SUJETO="Inicio del equipo"
 set MENSAJE="Se inicio el equipo a las %date% %time%"
 
+set SUJETOADJ="Adjunto inicio equipo"
+set MENSAJEADJ="Adjunto inicio equipo"
+
 ::CUENTA
 set SERVER="smtp.com"
 set USUARIO="test.com"
@@ -42,14 +45,10 @@ if %EXISTECONNECT% EQU "SI" (
 	if exist %RUTALOG% (
 		call:AGREGALINEAENLOG "SI"
 	) else (
-	
+		goto ENVIARCORREO
 	)
 ) else (
-	if exist %RUTALOG% (
-
-	) else (
-	
-	)
+	call:AGREGALINEAENLOG "NO"
 )
 
 :AGREGALINEAENLOG
@@ -58,29 +57,22 @@ if not exist %RUTALOG% echo Creacion de fichero  -------------------------------
 echo Se inicio el equipo a las %date% %time% >> %RUTALOG%
 
 if %ENVIALOG% EQU "SI" (
-	call:ENVIARCORREOADJ "SI"
+	goto ENVIARCORREOADJ
 ) else (
-
+	goto FIN
 )
 
 :ELIMINALOG
+DEL %RUTALOG%
 goto FIN
 
 :ENVIARCORREO
-
 blat -body %MENSAJE% -to %PARA% -subject %SUJETO% -i %DE% -server %SERVER% -f %DE% -u %USUARIO% -pw %PASSWORD% -noh
-
-if exist %PARAMETRORUTAPROGRAMA% (
-
-) else (
-
-)
+if %ERRORLEVEL%==0 goto FIN else call:AGREGALINEAENLOG "NO"
 
 :ENVIARCORREOADJ
-
-blat -body %MENSAJE% -to %PARA% -subject %SUJETO% -i %DE% -server %SERVER% -f %DE% -u %USUARIO% -pw %PASSWORD% -attach %RUTALOG% -noh
+blat -body %MENSAJEADJ% -to %PARA% -subject %SUJETOADJ% -i %DE% -server %SERVER% -f %DE% -u %USUARIO% -pw %PASSWORD% -attach %RUTALOG% -noh
 if %ERRORLEVEL%==0 goto ELIMINALOG else goto FIN
-
 
 :FIN
 exit
