@@ -42,25 +42,15 @@ if %ERRORLEVEL%==0 call:VERIFICASIEXISTELOG "NO" else call:VERIFICASIEXISTELOG "
 set EXISTECONNECT=%~1
 
 if %EXISTECONNECT% EQU "SI" (
-	if exist %RUTALOG% (
-		call:AGREGALINEAENLOG "SI"
-	) else (
-		goto ENVIARCORREO
-	)
-) else (
-	call:AGREGALINEAENLOG "NO"
-)
+	if exist %RUTALOG% ( call:AGREGALINEAENLOG "SI") else ( goto ENVIARCORREO )
+) else ( call:AGREGALINEAENLOG "NO" )
 
 :AGREGALINEAENLOG
 set ENVIALOG=%~1
 if not exist %RUTALOG% echo Creacion de fichero  ----------------------------------------------------------- >>%RUTALOG%
 echo Se inicio el equipo a las %date% %time% >> %RUTALOG%
 
-if %ENVIALOG% EQU "SI" (
-	goto ENVIARCORREOADJ
-) else (
-	goto FIN
-)
+if %ENVIALOG% EQU "SI" ( goto ENVIARCORREOADJ ) else ( goto FIN )
 
 :ELIMINALOG
 DEL %RUTALOG%
