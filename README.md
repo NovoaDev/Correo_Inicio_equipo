@@ -41,14 +41,23 @@ Entramos a configuration > edit configuration y se abrira un txt de configuracio
 
 buscamos la parte donde indique el servidor smtp de gmail y cambiamos la linea de accept que son las conexiones que acepta indicaremos despues de los dos puntos el numero de puerto que queramos en este ejemplo lo indicamos como 1099 
 
+//--------------------------------------
 [gmail-smtp]
+
 client = yes
+
 accept = 127.0.0.1:1099
+
 connect = smtp.gmail.com:465
+
 verifyChain = yes
+
 CAfile = ca-certs.pem
+
 checkHost = smtp.gmail.com
+
 OCSPaia = yes
+//--------------------------------------
 
 Guardamos y salimos. 
 
